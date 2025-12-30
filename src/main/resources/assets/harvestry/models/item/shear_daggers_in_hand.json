@@ -1,0 +1,6 @@
+{
+     "parent": "item/handheld",
+     "textures": {
+          "layer0": "harvestry:item/shear_daggers_in_hand"
+     }
+}

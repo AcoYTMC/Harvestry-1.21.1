@@ -1,0 +1,14 @@
+{
+     "required": true,
+     "package": "kindling.harvestry.mixin",
+     "compatibilityLevel": "JAVA_21",
+     "mixins": [],
+     "client": [
+          "client.HeldItemFeatureRendererMixin",
+          "client.HeldItemRendererMixin",
+          "client.PlayerEntityRendererMixin"
+     ],
+     "injectors": {
+          "defaultRequire": 1
+	}
+}

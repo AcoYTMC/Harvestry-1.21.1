@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"id": "harvestry",
+	"version": "${version}",
+	"name": "Harvestry",
+	"description": "",
+	"authors": [
+		"KindlingCinder",
+          "AcoYT",
+          "InfinityFarzad",
+          "Slyfily"
+	],
+	"license": "ARR",
+	"icon": "assets/harvestry/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+               "kindling.harvestry.impl.Harvestry"
+		],
+          "client": [
+               "kindling.harvestry.impl.HarvestryClient"
+          ],
+		"fabric-datagen": [
+               "kindling.harvestry.data.HarvestryDatagen"
+		]
+	},
+     "accessWidener": "harvestry.accesswidener",
+	"mixins": [
+		"harvestry.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.15.11",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": "*",
+          "acornlib": "*"
+	}
+}
