@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "harvestry:block/light_gray_compacted_strange_silk"
+  }
+}

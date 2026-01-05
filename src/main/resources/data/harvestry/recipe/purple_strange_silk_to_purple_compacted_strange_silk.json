@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "XXX",
+    "XXX",
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "item": "harvestry:purple_strange_silk"
+    }
+  },
+  "result": {
+    "id": "harvestry:purple_compacted_strange_silk",
+    "count": 1
+  }
+}

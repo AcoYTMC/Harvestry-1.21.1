@@ -6,4 +6,7 @@ import net.minecraft.item.ItemStack;
 
 public interface DoubleWieldedItem {
     BipedEntityModel.ArmPose getArmPose(ItemStack stack, AbstractClientPlayerEntity player);
+
+    ItemStack getSecondStack(ItemStack stack);
+    boolean isDouble(ItemStack stack);
 }

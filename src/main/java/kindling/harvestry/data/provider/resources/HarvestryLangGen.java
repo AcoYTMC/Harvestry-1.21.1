@@ -13,6 +13,6 @@ public class HarvestryLangGen extends FabricLanguageProvider {
     }
 
     public void generateTranslations(RegistryWrapper.WrapperLookup registries, TranslationBuilder builder) {
-        builder.add(HarvestryItems.SHEAR_DAGGERS, "Shear Daggers");
+       // builder.add(HarvestryItems., "Shear Daggers");
     }
 }

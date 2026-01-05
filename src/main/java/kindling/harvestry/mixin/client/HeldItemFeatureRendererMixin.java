@@ -28,9 +28,9 @@ public abstract class HeldItemFeatureRendererMixin<T extends LivingEntity, M ext
         boolean bl = entity.getMainArm() == Arm.RIGHT;
         ItemStack itemStack = bl ? entity.getOffHandStack() : entity.getMainHandStack();
         ItemStack itemStack2 = bl ? entity.getMainHandStack() : entity.getOffHandStack();
-        if (stack.getItem() instanceof DoubleWieldedItem && (itemStack == stack || itemStack.isEmpty()) && (itemStack2 == stack || itemStack2.isEmpty())) {
+        if (stack.getItem() instanceof DoubleWieldedItem wieldedItem && (itemStack == stack || itemStack.isEmpty()) && (itemStack2 == stack || itemStack2.isEmpty()) && wieldedItem.isDouble(stack)) {
             original.call(entity, stack, transformationMode, entity.getMainArm(), matrices, vertexConsumers, light);
-            original.call(entity, stack, getOppositeMode(transformationMode), entity.getMainArm().getOpposite(), matrices, vertexConsumers, light);
+            original.call(entity, wieldedItem.getSecondStack(stack), getOppositeMode(transformationMode), entity.getMainArm().getOpposite(), matrices, vertexConsumers, light);
             return;
         }
 

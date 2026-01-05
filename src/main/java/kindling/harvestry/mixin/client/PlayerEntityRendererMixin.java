@@ -14,14 +14,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class PlayerEntityRendererMixin {
     @Inject(method = "getArmPose", at = @At("HEAD"), cancellable = true)
     private static void doubleWieldedArmPose(AbstractClientPlayerEntity player, Hand hand, CallbackInfoReturnable<ArmPose> cir) {
-        if (player.getMainHandStack().getItem() instanceof DoubleWieldedItem wieldedItem) {
+        if (player.getMainHandStack().getItem() instanceof DoubleWieldedItem wieldedItem && wieldedItem.isDouble(player.getMainHandStack())) {
             ArmPose pose = wieldedItem.getArmPose(player.getMainHandStack(), player);
             if (pose != null) {
                 cir.setReturnValue(pose);
             }
         }
 
-        if (player.getOffHandStack().getItem() instanceof DoubleWieldedItem wieldedItem) {
+        if (player.getOffHandStack().getItem() instanceof DoubleWieldedItem wieldedItem && wieldedItem.isDouble(player.getMainHandStack())) {
             ArmPose pose = wieldedItem.getArmPose(player.getOffHandStack(), player);
             if (pose != null) {
                 cir.setReturnValue(pose);

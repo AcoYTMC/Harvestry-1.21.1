@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "harvestry:brown_compacted_strange_silk"
+    }
+  ],
+  "result": {
+    "id": "harvestry:brown_strange_silk",
+    "count": 9
+  }
+}
