@@ -68,11 +68,38 @@ public class ShearDaggerItem extends SwordItem implements DoubleWieldedItem, Mod
     public Identifier getModel(ModelTransformationMode renderMode, ItemStack stack, @Nullable LivingEntity entity) {
         boolean gui = MiscUtils.isGui(renderMode);
 
-        Type baseType = this.getType();
+        Type leftType = this.getType();
+        Type rightType = stack.get(HarvestryComponents.SINGLE_SLOT).type();
 
-        String path = "item/" + baseType.name().toLowerCase();
+        String path = leftType.name().toLowerCase();
         if (gui) {
-            path += "_gui";
+            if (leftType == Type.ALCHEMICAL && rightType == Type.CANNIBAL) {
+                path = "alchemical_left_cannibal_right";
+            } else if (leftType == Type.CANNIBAL && rightType == Type.ALCHEMICAL) {
+                path = "alchemical_right_cannibal_left";
+            } else if (leftType == Type.BOTANICAL && rightType == Type.ALCHEMICAL) {
+                path = "botanical_left_alchemical_right";
+            } else if (leftType == Type.BOTANICAL && rightType == Type.CANNIBAL) {
+                path = "botanical_left_cannibal_right";
+            } else if (leftType == Type.ALCHEMICAL && rightType == Type.BOTANICAL) {
+                path = "botanical_right_alchemical_left";
+            } else if (leftType == Type.CANNIBAL && rightType == Type.BOTANICAL) {
+                path = "botanical_right_cannibal_left";
+            } else if (leftType == Type.BOTANICAL && rightType == Type.NONE) {
+                path = "botanical_dagger";
+            } else if (leftType == Type.ALCHEMICAL && rightType == Type.NONE) {
+                path = "alchemical_dagger";
+            } else if (leftType == Type.CANNIBAL && rightType == Type.NONE) {
+                path = "cannibal_dagger";
+            } else if (leftType == Type.CANNIBAL && rightType == Type.CANNIBAL) {
+                path = "double_cannibal";
+            } else if (leftType == Type.ALCHEMICAL && rightType == Type.ALCHEMICAL) {
+                path = "double_alchemical";
+            } else if (leftType == Type.BOTANICAL && rightType == Type.BOTANICAL) {
+                path = "double_botanical";
+            }
+        } else {
+            path += "_dagger";
         }
 
         return Harvestry.id(path);
@@ -221,11 +248,17 @@ public class ShearDaggerItem extends SwordItem implements DoubleWieldedItem, Mod
     public List<Identifier> getModelsToLoad() {
         return Arrays.asList(
                 Harvestry.id("alchemical_dagger"),
-                Harvestry.id("alchemical_dagger_gui"),
                 Harvestry.id("botanical_dagger"),
-                Harvestry.id("botanical_dagger_gui"),
                 Harvestry.id("cannibal_dagger"),
-                Harvestry.id("cannibal_dagger_gui")
+                Harvestry.id("double_cannibal_dagger"),
+                Harvestry.id("double_cannibal_dagger"),
+                Harvestry.id("double_cannibal_dagger"),
+                Harvestry.id("alchemical_left_cannibal_right"),
+                Harvestry.id("alchemical_right_cannibal_left"),
+                Harvestry.id("botanical_left_alchemical_right"),
+                Harvestry.id("botanical_left_cannibal_right"),
+                Harvestry.id("botanical_right_alchemical_left"),
+                Harvestry.id("botanical_right_cannibal_left")
         );
     }
 

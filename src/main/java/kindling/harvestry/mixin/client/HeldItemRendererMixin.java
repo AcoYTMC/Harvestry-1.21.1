@@ -20,8 +20,8 @@ public class HeldItemRendererMixin {
         ItemStack itemStack = bl ? player.getOffHandStack() : player.getMainHandStack();
         ItemStack itemStack2 = bl ? player.getMainHandStack() : player.getOffHandStack();
         if (stack.getItem() instanceof DoubleWieldedItem wieldedItem && (itemStack == stack || itemStack.isEmpty()) && (itemStack2 == stack || itemStack2.isEmpty()) && wieldedItem.isDouble(stack)) {
-            original.call(player, tickDelta, pitch, Hand.MAIN_HAND, swingProgress, stack, equipProgress, matrices, vertexConsumers, light);
-            original.call(player, tickDelta, pitch, Hand.OFF_HAND, swingProgress, wieldedItem.getSecondStack(stack), equipProgress, matrices, vertexConsumers, light);
+            original.call(player, tickDelta, pitch, Hand.MAIN_HAND, swingProgress, wieldedItem.getSecondStack(stack), equipProgress, matrices, vertexConsumers, light);
+            original.call(player, tickDelta, pitch, Hand.OFF_HAND, swingProgress, stack, equipProgress, matrices, vertexConsumers, light);
             return;
         }
 
