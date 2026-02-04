@@ -20,19 +20,25 @@ import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.StackReference;
 import net.minecraft.item.*;
+import net.minecraft.item.tooltip.TooltipData;
+import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextColor;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
+import org.apache.commons.lang3.text.WordUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static net.minecraft.block.Block.dropStack;
 
@@ -65,13 +71,12 @@ public class ShearDaggerItem extends SwordItem implements DoubleWieldedItem, Mod
         return item == Items.AIR ? ItemStack.EMPTY : new ItemStack(item);
     }
 
-    public Identifier getModel(ModelTransformationMode renderMode, ItemStack stack, @Nullable LivingEntity entity) {
-        boolean gui = MiscUtils.isGui(renderMode);
-
+    private String getComboPath(ItemStack stack, boolean gui) {
         Type leftType = this.getType();
         Type rightType = stack.get(HarvestryComponents.SINGLE_SLOT).type();
 
         String path = leftType.name().toLowerCase();
+
         if (gui) {
             if (leftType == Type.ALCHEMICAL && rightType == Type.CANNIBAL) {
                 path = "alchemical_left_cannibal_right";
@@ -85,26 +90,61 @@ public class ShearDaggerItem extends SwordItem implements DoubleWieldedItem, Mod
                 path = "botanical_right_alchemical_left";
             } else if (leftType == Type.CANNIBAL && rightType == Type.BOTANICAL) {
                 path = "botanical_right_cannibal_left";
-            } else if (leftType == Type.BOTANICAL && rightType == Type.NONE) {
-                path = "botanical_dagger";
-            } else if (leftType == Type.ALCHEMICAL && rightType == Type.NONE) {
-                path = "alchemical_dagger";
-            } else if (leftType == Type.CANNIBAL && rightType == Type.NONE) {
-                path = "cannibal_dagger";
-            } else if (leftType == Type.CANNIBAL && rightType == Type.CANNIBAL) {
-                path = "double_cannibal";
-            } else if (leftType == Type.ALCHEMICAL && rightType == Type.ALCHEMICAL) {
-                path = "double_alchemical";
-            } else if (leftType == Type.BOTANICAL && rightType == Type.BOTANICAL) {
-                path = "double_botanical";
+            } else if (rightType == Type.NONE) {
+                path = leftType.name().toLowerCase() + "_dagger";
+            } else if (leftType == rightType) {
+                path = "double_" + leftType.name().toLowerCase() + "_dagger";
             }
         } else {
             path += "_dagger";
         }
 
-        return Harvestry.id(path);
+        return path;
     }
 
+    @Override
+    public Text getName(ItemStack stack) {
+        if (stack.get(HarvestryComponents.SINGLE_SLOT).type() != Type.NONE) {
+            return Text.translatable("item.harvestry.shear_daggers");
+        }
+        String path = getComboPath(stack, true);
+        return Text.translatable("item.harvestry." + path);
+    }
+
+    @Override
+    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
+        Type mainType = this.getType();
+        Type secondType = stack.get(HarvestryComponents.SINGLE_SLOT).type();
+
+        tooltip.add(Text.literal(WordUtils.capitalizeFully(mainType.toString())).setStyle(getTypeStyle(mainType)));
+
+        if (stack.get(HarvestryComponents.SINGLE_SLOT).type() != Type.NONE) {
+            tooltip.add(Text.literal(WordUtils.capitalizeFully(secondType.toString())).setStyle(getTypeStyle(secondType)));
+        }
+
+        super.appendTooltip(stack, context, tooltip, type);
+    }
+
+    private Style getTypeStyle(Type type) {
+        switch (type) {
+            case ALCHEMICAL -> {
+                return Style.EMPTY.withColor(TextColor.fromRgb(0xE485EC));
+            }
+            case BOTANICAL -> {
+                return Style.EMPTY.withColor(TextColor.fromRgb(0x54824B));
+            }
+            case CANNIBAL -> {
+                return Style.EMPTY.withColor(TextColor.fromRgb(0xB56030));
+            }
+        }
+        return Style.EMPTY;
+    }
+
+    public Identifier getModel(ModelTransformationMode renderMode, ItemStack stack, @Nullable LivingEntity entity) {
+        boolean gui = MiscUtils.isGui(renderMode);
+        String path = getComboPath(stack, gui);
+        return Harvestry.id(path);
+    }
 
     @Override
     public boolean onClicked(ItemStack stack, ItemStack cursorStack, Slot slot, ClickType clickType, PlayerEntity player, StackReference cursorReference) {
@@ -117,31 +157,21 @@ public class ShearDaggerItem extends SwordItem implements DoubleWieldedItem, Mod
 
         Type storedType = component.type();
 
-        // Case 1: Cursor is empty -> take out stored dagger
         if (cursorStack.isEmpty() && storedType != Type.NONE) {
-            Item storedItem = HarvestryItems.getDaggerFromType(storedType);
-            if (storedItem == null) return false;
-
-            cursorReference.set(new ItemStack(storedItem));
+            cursorReference.set(HarvestryItems.getDaggerFromType(storedType).getDefaultStack());
             stack.set(HarvestryComponents.SINGLE_SLOT, new SingleSlotComponent(Type.NONE));
             return true;
         }
 
-        // Case 2: Cursor has a dagger -> store it in the main dagger
-        if (cursorStack.getItem() instanceof ShearDaggerItem incomingDagger) {
-            Type incomingType = incomingDagger.getType();
+        if (!(cursorStack.getItem() instanceof ShearDaggerItem incomingDagger)) {
+            return false;
+        }
 
-            // Swap if something is already stored
+        Type incomingType = incomingDagger.getType();
+
+        if (storedType == Type.NONE) {
+            cursorStack.decrement(1);
             stack.set(HarvestryComponents.SINGLE_SLOT, new SingleSlotComponent(incomingType));
-
-            if (storedType == Type.NONE) {
-                // Nothing previously stored -> remove cursor dagger
-                cursorReference.set(ItemStack.EMPTY);
-            } else {
-                // Swap -> put old stored dagger in cursor
-                Item oldItem = HarvestryItems.getDaggerFromType(storedType);
-                cursorReference.set(oldItem == null ? ItemStack.EMPTY : new ItemStack(oldItem));
-            }
             return true;
         }
 
@@ -158,36 +188,26 @@ public class ShearDaggerItem extends SwordItem implements DoubleWieldedItem, Mod
         Type storedType = component.type();
         ItemStack slotStack = slot.getStack();
 
-        // Case 1: Slot empty -> take out stored dagger
         if (slotStack.isEmpty() && storedType != Type.NONE) {
-            Item storedItem = HarvestryItems.getDaggerFromType(storedType);
-            if (storedItem != null) {
-                slot.setStack(new ItemStack(storedItem));
-                stack.set(HarvestryComponents.SINGLE_SLOT, new SingleSlotComponent(Type.NONE));
-            }
+            slot.setStack(HarvestryItems.getDaggerFromType(storedType).getDefaultStack());
+            stack.set(HarvestryComponents.SINGLE_SLOT, new SingleSlotComponent(Type.NONE));
             return true;
         }
 
-        // Case 2: Slot has dagger -> store it in main dagger
-        if (slotStack.getItem() instanceof ShearDaggerItem daggerInSlot) {
-            Type incomingType = daggerInSlot.getType();
+        if (!(slotStack.getItem() instanceof ShearDaggerItem daggerInSlot)) {
+            return false;
+        }
 
-            // Swap if something is already stored
+        Type incomingType = daggerInSlot.getType();
+
+        if (storedType == Type.NONE) {
+            slot.setStack(ItemStack.EMPTY);
             stack.set(HarvestryComponents.SINGLE_SLOT, new SingleSlotComponent(incomingType));
-
-            if (storedType == Type.NONE) {
-                // Nothing previously stored -> remove dagger from slot
-                slot.setStack(ItemStack.EMPTY);
-            } else {
-                Item oldItem = HarvestryItems.getDaggerFromType(storedType);
-                slot.setStack(oldItem == null ? ItemStack.EMPTY : new ItemStack(oldItem));
-            }
             return true;
         }
 
         return false;
     }
-
 
     @Override
     public ActionResult useOnBlock(ItemUsageContext context) {
@@ -250,8 +270,8 @@ public class ShearDaggerItem extends SwordItem implements DoubleWieldedItem, Mod
                 Harvestry.id("alchemical_dagger"),
                 Harvestry.id("botanical_dagger"),
                 Harvestry.id("cannibal_dagger"),
-                Harvestry.id("double_cannibal_dagger"),
-                Harvestry.id("double_cannibal_dagger"),
+                Harvestry.id("double_alchemical_dagger"),
+                Harvestry.id("double_botanical_dagger"),
                 Harvestry.id("double_cannibal_dagger"),
                 Harvestry.id("alchemical_left_cannibal_right"),
                 Harvestry.id("alchemical_right_cannibal_left"),

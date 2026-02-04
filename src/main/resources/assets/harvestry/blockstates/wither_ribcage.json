@@ -1,0 +1,19 @@
+{
+     "variants": {
+          "facing=east": {
+               "model": "harvestry:block/wither_ribcage",
+               "y": 270
+          },
+          "facing=north": {
+               "model": "harvestry:block/wither_ribcage",
+               "y": 180
+          },
+          "facing=south": {
+               "model": "harvestry:block/wither_ribcage"
+          },
+          "facing=west": {
+               "model": "harvestry:block/wither_ribcage",
+               "y": 90
+          }
+     }
+}

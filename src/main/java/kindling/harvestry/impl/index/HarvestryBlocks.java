@@ -1,6 +1,7 @@
 package kindling.harvestry.impl.index;
 
 import kindling.harvestry.impl.Harvestry;
+import kindling.harvestry.impl.block.WitherRibcageBlock;
 import net.acoyt.acornlib.impl.item.TranslationBlockItem;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.block.AbstractBlock.Settings;
@@ -15,7 +16,7 @@ import java.util.function.Function;
 import static kindling.harvestry.impl.Harvestry.HARVESTRY_MAIN_KEY;
 
 public interface HarvestryBlocks {
-    Block WITHER_RIBCAGE = createWithItem("wither_ribcage", Block::new, Settings.copy(Blocks.BONE_BLOCK));
+    Block WITHER_RIBCAGE = createWithItem("wither_ribcage", WitherRibcageBlock::new, Settings.copy(Blocks.BONE_BLOCK));
 
     Block COMPACTED_STRANGE_SILK = createWithItem("compacted_strange_silk", Block::new, Settings.copy(Blocks.WHITE_WOOL));
     Block BLACK_COMPACTED_STRANGE_SILK = createWithItem("black_compacted_strange_silk", Block::new, Settings.copy(Blocks.BLACK_WOOL));

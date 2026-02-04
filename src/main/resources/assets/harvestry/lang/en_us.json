@@ -38,6 +38,17 @@
      "item.harvestry.green_strange_silk": "Green Strange Silk",
      "item.harvestry.dark_gray_strange_silk": "Gray Strange Silk",
      "item.harvestry.cyan_strange_silk": "Cyan Strange Silk",
-
+     "item.harvestry.botanical_dagger": "Botanical Dagger",
+     "item.harvestry.alchemical_dagger": "Alchemical Dagger",
+     "item.harvestry.cannibal_dagger": "Cannibal Dagger",
+     "item.harvestry.double_botanical_dagger": "Twin Botanical Daggers",
+     "item.harvestry.double_alchemical_dagger": "Twin Alchemical Daggers",
+     "item.harvestry.double_cannibal_dagger": "Twin Cannibal Daggers",
+     "item.harvestry.alchemical_left_cannibal_right": "Alchemical & Cannibal Dagger",
+     "item.harvestry.alchemical_right_cannibal_left": "Cannibal & Alchemical Dagger",
+     "item.harvestry.botanical_left_alchemical_right": "Botanical & Alchemical Dagger",
+     "item.harvestry.botanical_right_alchemical_left": "Alchemical & Botanical Dagger",
+     "item.harvestry.botanical_left_cannibal_right": "Botanical & Cannibal Dagger",
+     "item.harvestry.botanical_right_cannibal_left": "Cannibal & Botanical Dagger",
      "itemGroup.harvestry": "Harvestry"
 }
